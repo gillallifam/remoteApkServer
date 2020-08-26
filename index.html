@@ -1,0 +1,51 @@
+<html>
+
+<body>
+    <!-- <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+    <label for="vehicle1"> I have a bike</label> -->
+    <div id="targets"></div>
+    <form ref='uploadForm' id='uploadForm' action='/upload' method='post' encType="multipart/form-data">
+        <input type="file" name="apkFile" accept=".apk"/>
+        <input type='submit' value='Upload!' />
+    </form>
+    <h1 id="msgs"></h1>
+    <script>
+        var divTargets = document.getElementById("targets")
+        var cfg
+        var currTarget
+        fetch("/configs")
+            .then(response => response.json())
+            .then(json => {
+                cfg = json
+                currTarget = cfg.targets[0]
+                buildTargets(cfg.targets)
+            })
+        var form = document.getElementById("uploadForm")
+
+        function buildTargets(data) {
+            divTargets.innerHTML = ""
+            let id = 1
+            for (const target of data) {
+                let tEl = document.createElement("input")
+                tEl.type = "radio"
+                tEl.name = "target"
+                tEl.value = target
+                tEl.id = id
+                tEl.onclick = function (e) {
+                    currTarget = e.target.value
+                    form.setAttribute("action", "/upload/" + currTarget)
+                    console.log(form);
+                }
+                let tElLabel = document.createElement("label")
+                tElLabel.htmlFor = id
+                tElLabel.innerHTML = target
+                divTargets.appendChild(tEl)
+                divTargets.appendChild(tElLabel)
+                divTargets.appendChild(document.createElement("br"))
+                id++
+            }
+        }
+    </script>
+</body>
+
+</html>
