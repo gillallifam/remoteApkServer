@@ -6,29 +6,27 @@
     <div id="targets"></div>
     <form ref='uploadForm' id='uploadForm' action='/upload' method='post' encType="multipart/form-data">
         <input type="file" name="apkFile" accept=".apk" multiple=true />
-        <input type='submit' value='Upload!' />
+        <!-- <input type='submit' value='Upload!' /> -->
     </form>
-    <button id="btTst" onclick="tst(this);">tst</button>
+    <button id="btTst" onclick="tst(this);">Enviar apk</button>
     <h1 id="msgs"></h1>
     <script>
         var form = document.getElementById("uploadForm")
+        var msgs = document.getElementById("msgs")
         function tst(e) {
             let formData = new FormData(form);
-            fetch("/upload/" + currTarget, {
-                method: "POST",
-                body: formData
-            }).then(function (resp) {
-                console.log(resp);
-            });
-            //console.log(e);
-            /* console.log(form);
-            let data = Object.fromEntries(new FormData(form).entries());
-            console.log(data);
-            let formData = new FormData(document.querySelector('form'))
-            for (const entrie of formData.entries()) {
-                console.log(entrie);
-            } */
-
+            if (formData.get("apkFile").size) {
+                fetch("/upload/" + currTarget, {
+                    method: "POST",
+                    body: formData
+                }).then( async function (resp) {
+                    let result = await resp.text();
+                    msgs.innerText = result
+                    console.log(result);
+                });
+            } else {
+                msgs.innerText = "Select file to upload."
+            }
         }
         var divTargets = document.getElementById("targets")
         var cfg
